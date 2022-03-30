@@ -1,0 +1,5 @@
+server:
+  port: 22320
+spring:
+  application:
+    name: coupon-calculation

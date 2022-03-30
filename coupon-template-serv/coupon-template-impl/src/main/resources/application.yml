@@ -1,0 +1,33 @@
+# 项目启动端口
+server:
+  port: 22319
+spring:
+  application:
+    #项目名称
+    name: coupon-template-serv
+    # 项目名称
+  datasource:
+    username: root
+    password: yesj
+    url: jdbc:mysql://127.0.0.1:3306/coupondb?autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
+
+    # 数据源类型
+    type: com.zaxxer.hikari.HikariDataSource
+    # 数据库连接池参数配置，比如池子大小、超时时间、是否自动提交等等
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: fortuneCouponHikari
+      connection-timeout: 5000
+      idle-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      max-lifetime: 60000
+      auto-commit: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.format_sql: true
+      hinernate.show_sql: true
+    open-in-view: false
