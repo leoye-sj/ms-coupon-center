@@ -13,7 +13,7 @@ public class SearchCoupon {
     @NotNull
     private long userId;
 
-    private long shopId;
+    private Long shopId;
 
     private Integer couponStatus;
 }

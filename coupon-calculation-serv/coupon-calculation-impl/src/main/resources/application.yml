@@ -3,3 +3,17 @@ server:
 spring:
   application:
     name: coupon-calculation
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.242.129:8848
+        service: coupon-calculation-ser
+        heart-beat-interval: 5000
+        heart-beat-timeout: 20000
+        metadata:
+          mydata: abc
+        naming-load-cache-at-start: false
+        namespace: dev
+        cluster-name: Cluster-A
+        group: myGroup
+        register-enabled: true

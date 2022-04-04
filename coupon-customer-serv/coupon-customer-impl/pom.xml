@@ -17,7 +17,7 @@
     </properties>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coupon-calculation-impl</artifactId>
             <version>${project.version}</version>
@@ -27,7 +27,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coupon-template-impl</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>${project.groupId}</groupId>
