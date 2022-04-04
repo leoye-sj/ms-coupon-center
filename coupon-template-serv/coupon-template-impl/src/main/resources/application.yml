@@ -8,8 +8,8 @@ spring:
     # 项目名称
   datasource:
     username: root
-    password: yesj
-    url: jdbc:mysql://127.0.0.1:3306/coupondb?autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
+    password: yesjer
+    url: jdbc:mysql://192.168.242.129:3306/coupon_db?autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
 
     # 数据源类型
     type: com.zaxxer.hikari.HikariDataSource
@@ -31,3 +31,17 @@ spring:
       hibernate.format_sql: true
       hinernate.show_sql: true
     open-in-view: false
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.242.129:8848
+        service: coupon-template-ser
+        heart-beat-interval: 5000
+        heart-beat-timeout: 20000
+        metadata:
+          mydata: abc
+        naming-load-cache-at-start: false
+        namespace: dev
+        cluster-name: Cluster-A
+        group: myGroup
+        register-enabled: true
