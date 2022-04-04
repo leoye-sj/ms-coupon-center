@@ -9,7 +9,7 @@ spring:
   datasource:
     username: root
     password: yesjer
-    url: jdbc:mysql://192.168.242.129:3306/coupon_db?autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
+    url: jdbc:mysql://192.168.242.129:3306/coupon_db?autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull
 
     # 数据源类型
     type: com.zaxxer.hikari.HikariDataSource

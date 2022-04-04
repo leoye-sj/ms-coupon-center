@@ -7,6 +7,8 @@ import com.fortune.coupon.customer.api.beans.RequestCoupon;
 import com.fortune.coupon.customer.api.beans.SearchCoupon;
 import com.fortune.coupon.customer.api.enums.CouponStatus;
 import com.fortune.coupon.customer.converter.CouponConverter;
+import com.fortune.coupon.customer.feign.CalculationService;
+import com.fortune.coupon.customer.feign.TemplateService;
 import com.fortune.coupon.customer.service.CouponCustomerService;
 import com.fortune.coupon.dao.CouponDao;
 import com.fortune.coupon.dao.entity.Coupon;
@@ -37,18 +39,25 @@ public class CouponCustomerServiceImpl implements CouponCustomerService {
     @Autowired
     private CouponDao couponDao;
 
+    /*@Autowired
+    private WebClient.Builder webClientBuilder;*/
+
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    private TemplateService templateService;
+
+    @Autowired
+    private CalculationService calculationService;
 
 
     @Override
     public Coupon requestCoupon(RequestCoupon requestCoupon) {
         // CouponTemplateInfo couponTemplateInfo = couponTemplateService.loadTemplateInfo(requestCoupon.getCouponTemplateId());
-        CouponTemplateInfo couponTemplateInfo = webClientBuilder.build().get()
+        /*CouponTemplateInfo couponTemplateInfo = webClientBuilder.build().get()
                 .uri("http://coupon-template-ser/template/getTemplate?id="+requestCoupon.getCouponTemplateId())
                 .retrieve()
                 .bodyToMono(CouponTemplateInfo.class)
-                .block();
+                .block();*/
+        CouponTemplateInfo couponTemplateInfo = templateService.getTemplate(requestCoupon.getCouponTemplateId());
 
         // 模板不存在则报错
         if (couponTemplateInfo == null) {
@@ -98,11 +107,12 @@ public class CouponCustomerServiceImpl implements CouponCustomerService {
             coupon = couponDao.findAll(Example.of(example))
                     .stream().findFirst().orElseThrow(() -> new RuntimeException("Coupon not found"));
             CouponInfo couponInfo = CouponConverter.convertToCoupon(coupon);
-            CouponTemplateInfo couponTemplateInfo = webClientBuilder.build().get()
+            /*CouponTemplateInfo couponTemplateInfo = webClientBuilder.build().get()
                     .uri("http://coupon-template-ser/template/getTemplate?id="+coupon.getTemplateId())
                     .retrieve()
                     .bodyToMono(CouponTemplateInfo.class)
-                    .block();
+                    .block();*/
+            CouponTemplateInfo couponTemplateInfo = templateService.getTemplate(coupon.getTemplateId());
             couponInfo.setCouponTemplateInfo(couponTemplateInfo);
 
             shoppingCart.setCouponInfos(Lists.newArrayList(couponInfo));
@@ -110,13 +120,14 @@ public class CouponCustomerServiceImpl implements CouponCustomerService {
         }
         //计算订单优惠价格
         // ShoppingCart checkOutInfo = couponCalculationService.calculateOrderPrice(shoppingCart);
-        ShoppingCart checkOutInfo = webClientBuilder.build()
+        /*ShoppingCart checkOutInfo = webClientBuilder.build()
                 .post()
                 .uri("http://coupon-calculation-ser/calculator/checkout")
                 .bodyValue(shoppingCart)
                 .retrieve()
                 .bodyToMono(ShoppingCart.class)
-                .block();
+                .block();*/
+       ShoppingCart checkOutInfo = calculationService.checkout(shoppingCart);
         if (coupon != null) {
             //如果优惠券没有被结算掉，而用户传递了优惠券，报错提示该订单满足不了优惠条件
             if (CollectionUtils.isEmpty(shoppingCart.getCouponInfos())) {
@@ -142,25 +153,27 @@ public class CouponCustomerServiceImpl implements CouponCustomerService {
         StringJoiner stringJoiner = new StringJoiner(",");
         couponTemplateIds.forEach(s->stringJoiner.add(s+""));
         log.info("couponTemplateIds:{}",stringJoiner.toString());
-        Map<Long, CouponTemplateInfo> templateInfoMap = webClientBuilder.build()
+        /*Map<Long, CouponTemplateInfo> templateInfoMap = webClientBuilder.build()
                 .get()
                 .uri("http://coupon-template-ser/template/getBatch?ids="+stringJoiner.toString())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<Long,CouponTemplateInfo>>() {})
-                .block();
+                .block();*/
+        Map<Long,CouponTemplateInfo> templateInfoMap = templateService.getTemplateInBatch(couponTemplateIds);
 
         couponList.stream().forEach(coupon -> coupon.setTemplateInfo(templateInfoMap.get(coupon.getTemplateId())));
 
         List<CouponInfo> couponInfoList = couponList.stream().map(CouponConverter::convertToCoupon).collect(Collectors.toList());
         simulationOrder.setCouponInfos(couponInfoList);
 
-        SimulationResponse simulationResponse = webClientBuilder.build()
+        /*SimulationResponse simulationResponse = webClientBuilder.build()
                 .post()
                 .uri("http://coupon-calculation-ser/calculator/simulate")
                 .bodyValue(simulationOrder)
                 .retrieve()
                 .bodyToMono(SimulationResponse.class)
-                .block();
+                .block();*/
+        SimulationResponse simulationResponse = calculationService.simulate(simulationOrder);
 
         return simulationResponse;
     }
@@ -185,19 +198,19 @@ public class CouponCustomerServiceImpl implements CouponCustomerService {
         if (CollectionUtils.isEmpty(couponList)) {
             return Lists.newArrayList();
         }
-        List<Long> couponTemplateId = couponList.stream().map(coupon -> coupon.getTemplateId()).collect(Collectors.toList());
+        List<Long> couponTemplateIds = couponList.stream().map(coupon -> coupon.getTemplateId()).collect(Collectors.toList());
         // Map<Long, CouponTemplateInfo> templateInfoMap = couponTemplateService.getTemplateInfoMap(couponTemplateId);
         StringJoiner stringJoiner = new StringJoiner(",");
-        couponTemplateId.forEach(s->stringJoiner.add(s+""));
+        couponTemplateIds.forEach(s->stringJoiner.add(s+""));
         log.info("couponTemplateIds:{}",stringJoiner.toString());
-        Map<Long,CouponTemplateInfo> templateInfoMap = webClientBuilder.build()
+        /*Map<Long,CouponTemplateInfo> templateInfoMap = webClientBuilder.build()
                 .get()
                 .uri("http://coupon-template-ser/template/getBatch?ids="+stringJoiner.toString())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<Long,CouponTemplateInfo>>() {})
-                .block();
+                .block();*/
+        Map<Long,CouponTemplateInfo> templateInfoMap = templateService.getTemplateInBatch(couponTemplateIds);
         couponList.forEach(coupon -> coupon.setTemplateInfo(templateInfoMap.get(coupon.getTemplateId())));
-
         return couponList.stream()
                 .map(CouponConverter::convertToCoupon).collect(Collectors.toList());
     }
