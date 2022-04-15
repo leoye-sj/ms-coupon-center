@@ -21,6 +21,7 @@ import java.util.List;
 public class CouponCalculationServiceImpl implements CouponCalculationService {
     @Autowired
     private CouponCalculationTemplateFactory couponCalculationTemplateFactory;
+
     @Override
     public ShoppingCart calculateOrderPrice(@RequestBody ShoppingCart cart) {
         log.info("calculate order price: {}", JSON.toJSONString(cart));
