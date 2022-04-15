@@ -17,3 +17,26 @@ spring:
         cluster-name: Cluster-A
         group: myGroup
         register-enabled: true
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 192.168.242.129:8080
+      web-context-unify: false
+
+
+
+  sleuth:
+    sampler:
+      probability: 1.0
+      rate: 1000
+  zipkin:
+    sender:
+      type: rabbit
+    rabbitmq:
+      queue: zipkin
+      addresses: 192.168.242.130:5672
+  rabbitmq:
+    host: 192.168.242.130
+    port: 5672
+    username: yesj
+    password: yesj

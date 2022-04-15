@@ -1,5 +1,6 @@
 package com.fortune.coupon.template.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.fastjson.JSON;
 import com.fortune.coupon.template.api.beans.CouponTemplateInfo;
 import com.fortune.coupon.template.api.beans.PagedCouponTemplateInfo;
@@ -36,6 +37,7 @@ public class CouponTemplateController {
 
     // 读取优惠券
     @GetMapping("/getTemplate")
+    @SentinelResource(value = "getTemplate",blockHandlerClass = CouponTemplateControllerBlockHandle.class,blockHandler = "getTemplateBlock")
     public CouponTemplateInfo getTemplate(@RequestParam("id") Long id){
         log.info("Load template, id={}", id);
         return couponTemplateService.loadTemplateInfo(id);
@@ -43,6 +45,7 @@ public class CouponTemplateController {
 
     // 批量获取
     @GetMapping("/getBatch")
+    @SentinelResource(value = "getBath",blockHandlerClass = CouponTemplateControllerBlockHandle.class,blockHandler = "getTemplateInBatchBlock")
     public Map<Long, CouponTemplateInfo> getTemplateInBatch(@RequestParam("ids") Collection<Long> ids) {
         log.info("getTemplateInBatch: {}", JSON.toJSONString(ids));
         return couponTemplateService.getTemplateInfoMap(ids);

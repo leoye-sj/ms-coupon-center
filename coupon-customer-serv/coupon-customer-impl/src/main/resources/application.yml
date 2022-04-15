@@ -4,32 +4,14 @@ server:
 spring:
   application:
     #项目名称
-    name: coupon-customer-serv
-    # 项目名称
-  datasource:
-    username: root
-    password: yesjer
-    url: jdbc:mysql://192.168.242.129:3306/coupon_db?autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull
-
-    # 数据源类型
-    type: com.zaxxer.hikari.HikariDataSource
-    # 数据库连接池参数配置，比如池子大小、超时时间、是否自动提交等等
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      pool-name: fortuneCouponHikari
-      connection-timeout: 5000
-      idle-timeout: 30000
-      maximum-pool-size: 10
-      minimum-idle: 5
-      max-lifetime: 60000
-      auto-commit: true
+    name: coupon-customer-ser
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: none
     properties:
       hibernate.format_sql: true
-      hinernate.show_sql: true
+      hinernate.show_sql: false
     open-in-view: false
   main:
     allow-bean-definition-overriding: true
@@ -47,6 +29,26 @@ spring:
         cluster-name: Cluster-A
         group: myGroup
         register-enabled: true
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 192.168.242.129:8080
+      web-context-unify: false
+  sleuth:
+    sampler:
+      probability: 1.0
+      rate: 1000
+  rabbitmq:
+    host: 192.168.242.130
+    port: 5672
+    username: yesj
+    password: yesj
+  zipkin:
+    sender:
+      type: rabbit
+    rabbitmq:
+      addresses: 192.168.242.130:5672
+      queue: zipkin
 # feign接口类日志级别设置
 logging:
   level:
